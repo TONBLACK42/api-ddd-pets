@@ -35,7 +35,7 @@ namespace Pets.Domain.Validations
         //Se houve alguma quebra de contrato.
         public bool IsValid()
         {
-            return _notifications.Count ==0;
+            return (_notifications.Count ==0 ? true : false);
         }
     }
 }

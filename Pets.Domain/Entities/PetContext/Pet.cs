@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Pets.Domain.Validations;
+using Pets.Domain.Validations.Interfaces;
 using Pets.Domain.ValueObjects;
 
 namespace Pets.Domain.Entities.PetContext
 {
-    public class Pet : BaseEntity
+    public class Pet : BaseEntity, IContract
     {
         public Pet(Name name, int identifier)
             : base(name)
@@ -26,13 +28,18 @@ namespace Pets.Domain.Entities.PetContext
         //Contrato para o Método.
         public override bool Validation()
         {
-            if(string.IsNullOrEmpty(this.Name.FirstName))
-                return false;
-
-             if(string.IsNullOrEmpty(this.Name.LastName))
-                return false;
-
-            return true;
+            //Verifica se o tipo informado é do tipo IContract para poder 
+            //instanciar as validações.
+            //Como retornamos a prórpia extensão é possivel chamarmos métodos 
+            //em cima de métodos.
+            var contracts = 
+            new ContractValidations<Pet>()
+            .FirstNameIsValid(this.Name,20,5,"O primeiro nome deve ter entre 4 e 20 caracteres","FirstName")
+            .LastNameIsValid(this.Name,20,5,"O último nome deve ter entre 4 e 20 caracteres","LastName");
+            
+            //Faz um count na lista de notificação e se estiver zerada,
+            //retorna true (é valida)
+            return contracts.IsValid();
         }
         
     }
